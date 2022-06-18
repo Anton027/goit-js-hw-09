@@ -2,11 +2,22 @@ import flatpickr from "flatpickr";
 import Notiflix from 'notiflix';
 import "flatpickr/dist/flatpickr.min.css";
 
-const startBtn = document.querySelector('button[data-start]');
-startBtn.disabled = true;
+const refs = {
+    startBtn: document.querySelector('button[data-start]'),
+    daysFace: document.querySelector('[data-days]'),
+    hoursFace: document.querySelector('[data-hours]'),
+    minutesFace: document.querySelector('[data-minutes]'),
+    secondsFace: document.querySelector('[data-seconds]'),
+    inputDate: document.querySelector('#datetime-picker')
+}
+
+refs.startBtn.disabled = true;
+refs.inputDate.disabled = false;
+console.log(refs.inputDate);
 
 let selectedDate = null;
-let dateS = 0;
+let dateDifference = 0;
+let dateDifConvert = null;
 
 const options = {
     enableTime: true,
@@ -14,26 +25,51 @@ const options = {
     defaultDate: new Date(),
     minuteIncrement: 1,
     onClose(selectedDates) {
-        console.log(selectedDates[0]);
-        console.log(options.defaultDate);
         if (selectedDates[0] > options.defaultDate) {
-            startBtn.disabled = false;
+            refs.startBtn.disabled = false;
+            
             selectedDate = selectedDates[0];
-            dateS =  selectedDate - options.defaultDate;
-            console.log(dateS);
-            console.log(convertMs(dateS));
         } else {
             Notiflix.Notify.failure('Please choose a date in the future');
         }
+        updateTextContent();
     },
+};
+flatpickr('#datetime-picker', options);
+dateDifConvert = convertMs(dateDifference);
+const timer = {
+    isActive: false,
+    start() {
+        if (this.isActive) {
+            
+            return;
+        }
+        this.isActive = true;
+        setInterval(() => {
+        const currentDate = new Date();
+        dateDifference = selectedDate - currentDate;
+        dateDifConvert = convertMs(dateDifference);
+        updateTextContent();
+        }, 1000)
+    }
 };
 
 
+refs.startBtn.addEventListener('click', () => {
+    timer.start();
+    refs.inputDate.disabled = true;
+});
 
-// console.log(options.defaultDate);
-flatpickr('#datetime-picker', options);
-startBtn.addEventListener('click', onclick);
-function onclick() { };
+function updateTextContent() {
+    refs.daysFace.textContent = dateDifConvert.days;
+    refs.hoursFace.textContent = dateDifConvert.hours;
+    refs.minutesFace.textContent = dateDifConvert.minutes;
+    refs.secondsFace.textContent = dateDifConvert.seconds;
+}
+
+function  addLeadingZero(value) {
+    return String(value).padStart(2, '0');
+}
 
 function convertMs(ms) {
     // Number of milliseconds per unit of time
@@ -43,13 +79,13 @@ function convertMs(ms) {
     const day = hour * 24;
 
     // Remaining days
-    const days = Math.floor(ms / day);
+    const days = addLeadingZero(Math.floor(ms / day));
     // Remaining hours
-    const hours = Math.floor((ms % day) / hour);
+    const hours = addLeadingZero(Math.floor((ms % day) / hour));
     // Remaining minutes
-    const minutes = Math.floor(((ms % day) % hour) / minute);
+    const minutes = addLeadingZero(Math.floor(((ms % day) % hour) / minute));
     // Remaining seconds
-    const seconds = Math.floor((((ms % day) % hour) % minute) / second);
+    const seconds = addLeadingZero(Math.floor((((ms % day) % hour) % minute) / second));
 
     return { days, hours, minutes, seconds };
 }
