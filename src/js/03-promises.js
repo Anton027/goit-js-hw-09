@@ -4,32 +4,24 @@ const form = document.querySelector('.form');
 const firstDelay = form.querySelector('[name="delay"]');
 const delayStep = form.querySelector('[name="step"]');
 const amount = form.querySelector('[name="amount"]');
-
-
-  // console.log(firstDelay);
-  // console.log(delayStep);
-  // console.log(amount);
-
-// const  valuesForm = {
-//     firstDelay: firstDelay.value,
-//     delayStep: delayStep.value,
-//     amount: amount.value
-// };
-  
-// console.log('valuesForm', valuesForm);
+// ЗАПУСТИТИ В ЦИКЛІ ПРОМІСИ
+// ПЕРЕДАТИ DELAY НА КОЖНІЙ ІТЕРАЦІЇ for + те що у формі зібрали
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
+  let numbFirstDelay = Number.parseInt(firstDelay.value);
+  const numbDelayStep = Number.parseInt(delayStep.value);
 
-  for (let index = 0; index < amount.value; index++) {
-    createPromise(delayStep.value, firstDelay.value)
+  for (let index = 1; index <= amount.value; index += 1) {
+    numbFirstDelay += numbDelayStep;
+    createPromise(index, numbFirstDelay)
       .then(({ position, delay }) => {
         Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
       })
       .catch(({ position, delay }) => {
       Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
       }); 
-    }
+  }
 });
 
 function createPromise(position, delay) {
@@ -46,39 +38,3 @@ function createPromise(position, delay) {
     }, delay)
   });
 }
-
-// form.addEventListener('submit', getValuesform);
-// refs.firstDelay.addEventListener('input', (e) => {
-//   let valuefirstDelay = 0;
-//   valuefirstDelay = e.currentTarget.value;
-  
-//   console.log(valuefirstDelay);
-// });
-
-// console.dir(refs.firstDelay.value);
-
-// for (let index = 0; index < refs.amount.value; index++) {
-//   createPromise(index).then(value => value); 
-// }
-
-// refs.submitBtn.addEventListener('click', () => {
-
-//   for (let index = 0; index < 10; index++) {
-//     createPromise(index, 5000).then(({ position, delay }) => {
-//     Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-//   })
-//   .catch(({ position, delay }) => {
-//     Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
-//   }); 
-//   }
-//   console.log('clikc yet');
-// });
-
-
-// createPromise(2, 1500)
-//   .then(({ position, delay }) => {
-//     Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-//   })
-//   .catch(({ position, delay }) => {
-//     Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
-//   });
