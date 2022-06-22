@@ -12,7 +12,8 @@ form.addEventListener('submit', (e) => {
   let numbFirstDelay = Number.parseInt(firstDelay.value);
   const numbDelayStep = Number.parseInt(delayStep.value);
 
-  for (let index = 1; index <= amount.value; index += 1) {
+  if (numbFirstDelay > 0 && numbDelayStep > 0) {
+    for (let index = 1; index <= amount.value; index += 1) {
     numbFirstDelay += numbDelayStep;
     createPromise(index, numbFirstDelay)
       .then(({ position, delay }) => {
@@ -21,6 +22,10 @@ form.addEventListener('submit', (e) => {
       .catch(({ position, delay }) => {
       Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
       }); 
+  } 
+  } else {
+    Notiflix.Notify.failure(`Please change value "delay"`);
+    return;
   }
 });
 

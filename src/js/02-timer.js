@@ -21,12 +21,12 @@ let dateDifConvert = null;
 const options = {
     enableTime: true,
     time_24hr: true,
-    defaultDate: new Date(),
+    defaultDate: Date.now(),
     minuteIncrement: 1,
     onClose(selectedDates) {
-        if (selectedDates[0] > options.defaultDate) {
+        if (selectedDates[0] >= options.defaultDate) {
             refs.startBtn.disabled = false;
-            
+
             selectedDate = selectedDates[0];
         } else {
             Notiflix.Notify.failure('Please choose a date in the future');
@@ -38,19 +38,30 @@ const options = {
 flatpickr('#datetime-picker', options);
 dateDifConvert = convertMs(dateDifference);
 const timer = {
+    intervalId: null,
     start() {
-        setInterval(() => {
-        const currentDate = new Date();
-        dateDifference = selectedDate - currentDate;
-        dateDifConvert = convertMs(dateDifference);
-        updateTextContent();
+        
+        this.intervalId = setInterval(() => {
+            const currentDate = Date.now();
+            if (currentDate >= selectedDate) {
+                this.stop();
+            } else {
+                dateDifference = selectedDate - currentDate;
+                dateDifConvert = convertMs(dateDifference);
+                updateTextContent();
+            }
         }, 1000)
+        
+    },
+    stop() {
+        clearInterval(this.intervalId);
     }
 };
 
 
 refs.startBtn.addEventListener('click', () => {
     timer.start();
+    // timer.stop();
     refs.inputDate.disabled = true;
 });
 
