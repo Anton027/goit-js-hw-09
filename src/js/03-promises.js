@@ -25,6 +25,7 @@ form.addEventListener('submit', (e) => {
   } 
   } else {
     Notiflix.Notify.failure(`Please change value "delay"`);
+    form.reset();
     return;
   }
 });
